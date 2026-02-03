@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "860080885808",
+    "project_id": "atesur-app-v4",
+    "storage_bucket": "atesur-app-v4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:860080885808:android:47432ef43899a898389df5",
+        "android_client_info": {
+          "package_name": "com.atesur.atesur_app_v4"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6j4LD-n_xHlVmCTVWHNrH2XThTFTtGxg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

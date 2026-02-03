@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default notification channel ID for FCM -->
+    <string name="default_notification_channel_id">atesur_notifications</string>
+    <string name="default_notification_channel_name">ATESUR Notifications</string>
+    <string name="default_notification_channel_description">Notificaciones de programación, noticias y actualizaciones de ATESUR</string>
+</resources>

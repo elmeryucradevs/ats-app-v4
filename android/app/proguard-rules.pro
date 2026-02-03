@@ -1,0 +1,2 @@
+-keep class com.atesur.atesur_app_v4.CastOptionsProvider { *; }
+-keep class com.google.android.gms.cast.framework.** { *; }
