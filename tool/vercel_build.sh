@@ -24,13 +24,23 @@ flutter config --enable-web
 echo "📦 Getting packages..."
 flutter pub get
 
-# 5. Build for Web
+# 5. Pre-build Setup
+echo "🔧 Creating dummy .env and assets for build..."
+# Create dummy .env since pubspec.yaml includes it
+touch .env
+
+# Ensure asset directories exist (even if empty) to satisfy pubspec.yaml
+mkdir -p assets/images
+mkdir -p assets/icons
+mkdir -p assets/data
+
+# 6. Build for Web
 # We construct the --dart-define args from environment variables
 # Ensure these variables are set in Vercel Project Settings
 
 echo "🏗️  Building web application..."
 
-flutter build web --release \
+flutter build web --release --verbose \
   --dart-define=STREAM_URL="$STREAM_URL" \
   --dart-define=SUPABASE_URL="$SUPABASE_URL" \
   --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
