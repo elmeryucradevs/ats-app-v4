@@ -175,13 +175,13 @@ flutter:
   # Assets de la aplicación
   assets:
     # Imágenes
-    #- assets/images/
+    - assets/images/
     
     # Iconos
-    #- assets/icons/
+    - assets/icons/
     
     # Datos locales (JSON de ejemplo para la guía de programación)
-    #- assets/data/
+    - assets/data/
 
     # Variables de entorno
     - .env

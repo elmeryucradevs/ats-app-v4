@@ -1,4 +1,8 @@
-#!/bin/bash
+# Ensure we are in the project root
+cd "$(dirname "$0")/.."
+
+echo "📍 Current working directory: $(pwd)"
+
 
 echo "🚀 Starting Vercel Build for Flutter..."
 
