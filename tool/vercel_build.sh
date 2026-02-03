@@ -26,13 +26,26 @@ flutter pub get
 
 # 5. Pre-build Setup
 echo "🔧 Creating dummy .env and assets for build..."
+
+# Debug: Check where we are
+pwd
+ls -la
+
 # Create dummy .env since pubspec.yaml includes it
 touch .env
+echo "Dummy .env created"
 
-# Ensure asset directories exist (even if empty) to satisfy pubspec.yaml
+# Ensure asset directories exist AND have content to satisfy pubspec.yaml
 mkdir -p assets/images
 mkdir -p assets/icons
 mkdir -p assets/data
+
+touch assets/images/.keep
+touch assets/icons/.keep
+touch assets/data/.keep
+
+echo "📂 Assets structure:"
+ls -R assets
 
 # 6. Build for Web
 # We construct the --dart-define args from environment variables
