@@ -16,6 +16,8 @@ import '../../../core/widgets/tv_focusable_widgets.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/appbar_logo_widget.dart';
+import '../../advertising/widgets/smart_banner.dart';
+import '../../advertising/models/ad_entities.dart';
 
 /// Pantalla principal del reproductor de video en vivo
 ///
@@ -139,6 +141,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                   ),
                   // Banner de programa actual
                   _buildCurrentProgramBanner(context, ref, currentProgramAsync),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: SmartBanner(position: AdPosition.center),
+                  ),
                   const Divider(height: 1),
                   // Guía de programación más pequeña (40% del alto)
                   const Expanded(

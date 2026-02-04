@@ -17,6 +17,7 @@ import 'src/features/schedule/services/local_notification_service.dart';
 import 'src/features/schedule/services/alarm_callback_service.dart';
 import 'src/features/player/services/chromecast_service.dart';
 import 'src/features/inapp/widgets/inapp_message_listener.dart';
+import 'src/features/advertising/widgets/startup_interstitial.dart';
 
 // TV Navigation
 import 'package:simple_tv_navigation/simple_tv_navigation.dart';
@@ -195,12 +196,15 @@ class MyApp extends ConsumerWidget {
         // BUILDER (In-App Messages + Overlays)
         // ===================================
         builder: (context, child) {
-          return InAppMessageListener(
-            child: Stack(
-              children: [
-                // La aplicación principal
-                child!,
-              ],
+          return StartupInterstitial(
+            // Publicidad Global al Inicio
+            child: InAppMessageListener(
+              child: Stack(
+                children: [
+                  // La aplicación principal
+                  child!,
+                ],
+              ),
             ),
           );
         },

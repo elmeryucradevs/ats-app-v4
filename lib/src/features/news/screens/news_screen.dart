@@ -6,6 +6,8 @@ import '../widgets/news_card_skeleton.dart';
 import '../widgets/news_search_delegate.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/tv_focusable_widgets.dart';
+import '../../advertising/widgets/smart_banner.dart';
+import '../../advertising/models/ad_entities.dart';
 
 /// Pantalla principal de noticias
 ///
@@ -65,19 +67,29 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
               padding: const EdgeInsets.symmetric(
                 vertical: AppConstants.spacingSm,
               ),
-              itemCount: totalItems,
+              itemCount: totalItems + 1, // +1 for Top Banner
               itemBuilder: (context, index) {
+                if (index == 0) {
+                  return const Padding(
+                    padding: EdgeInsets.only(bottom: AppConstants.spacingMd),
+                    child: SmartBanner(position: AdPosition.top),
+                  );
+                }
+                final postIndex = index - 1;
+
                 // Si es el último item y hay más, mostrar botón de cargar más
-                if (index == newsResponse.posts.length) {
-                  return _buildLoadMoreButton(index);
+                if (postIndex == newsResponse.posts.length) {
+                  return _buildLoadMoreButton(postIndex);
                 }
 
                 return NewsCard(
-                  post: newsResponse.posts[index],
-                  tvId: 'news_card_$index',
-                  tvUpId: index == 0 ? 'news_search' : 'news_card_${index - 1}',
-                  tvDownId: index < totalItems - 1
-                      ? 'news_card_${index + 1}'
+                  post: newsResponse.posts[postIndex],
+                  tvId: 'news_card_$postIndex',
+                  tvUpId: postIndex == 0
+                      ? 'news_search'
+                      : 'news_card_${postIndex - 1}',
+                  tvDownId: postIndex < (totalItems - 1)
+                      ? 'news_card_${postIndex + 1}'
                       : (newsResponse.hasMore
                           ? 'news_loadmore'
                           : 'mini_banner'),

@@ -141,6 +141,7 @@ dependencies:
   flutter_chrome_cast: ^1.2.7
   simple_pip_mode: ^1.1.0
   device_info_plus: ^12.3.0
+  visibility_detector: ^0.4.0+2
 
 
 # ===================================
