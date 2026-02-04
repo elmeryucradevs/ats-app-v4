@@ -49,6 +49,7 @@ app.*.map.json
 # Firebase (solo archivos de configuración con credenciales)
 # Mantener google-services.json y GoogleService-Info.plist en git
 # pero proteger secrets específicos si los hay
+*firebase-adminsdk*.json
 
 # macOS
 .DS_Store
