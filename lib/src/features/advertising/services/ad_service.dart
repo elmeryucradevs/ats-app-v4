@@ -44,12 +44,14 @@ class AdService {
     required String adId,
     required String campaignId,
     required String eventType, // 'impression', 'click', 'skip'
+    Map<String, dynamic>? metadata,
   }) async {
     try {
       await _supabase.functions.invoke('track-ad-event', body: {
         'ad_id': adId,
         'campaign_id': campaignId,
         'event_type': eventType,
+        'metadata': metadata ?? {},
         // Browser/App can add more context if needed, but IP is handled by Edge Function better
       });
     } catch (e) {

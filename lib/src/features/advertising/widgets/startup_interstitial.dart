@@ -63,7 +63,11 @@ class _StartupInterstitialState extends ConsumerState<StartupInterstitial> {
         });
         // Track Impression
         ref.read(adServiceProvider).trackEvent(
-            adId: ad.id, campaignId: ad.campaignId, eventType: 'impression');
+          adId: ad.id,
+          campaignId: ad.campaignId,
+          eventType: 'impression',
+          metadata: {'context': 'startup_interstitial'},
+        );
       }
     }
   }

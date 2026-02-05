@@ -8,11 +8,13 @@ import '../services/ad_service.dart';
 class SmartBanner extends ConsumerStatefulWidget {
   final AdPosition position;
   final String? city;
+  final Map<String, dynamic>? metadata;
 
   const SmartBanner({
     super.key,
     required this.position,
     this.city,
+    this.metadata,
   });
 
   @override
@@ -39,7 +41,11 @@ class _SmartBannerState extends ConsumerState<SmartBanner> {
     if (mounted) {
       if (ad != null) {
         ref.read(adServiceProvider).trackEvent(
-            adId: ad.id, campaignId: ad.campaignId, eventType: 'impression');
+              adId: ad.id,
+              campaignId: ad.campaignId,
+              eventType: 'impression',
+              metadata: widget.metadata,
+            );
       }
       setState(() {
         _ad = ad;
@@ -54,7 +60,11 @@ class _SmartBannerState extends ConsumerState<SmartBanner> {
       if (await canLaunchUrl(url)) {
         await launchUrl(url);
         ref.read(adServiceProvider).trackEvent(
-            adId: _ad!.id, campaignId: _ad!.campaignId, eventType: 'click');
+              adId: _ad!.id,
+              campaignId: _ad!.campaignId,
+              eventType: 'click',
+              metadata: widget.metadata,
+            );
       }
     }
   }

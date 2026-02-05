@@ -19,7 +19,7 @@ serve(async (req) => {
             { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
         )
 
-        const { ad_id, campaign_id, event_type, ip_address, user_agent } = await req.json()
+        const { ad_id, campaign_id, event_type, ip_address, user_agent, country, city, metadata } = await req.json()
 
         // 1. Insert Stat Record
         const { error: statError } = await supabaseClient
@@ -28,8 +28,11 @@ serve(async (req) => {
                 ad_id,
                 campaign_id,
                 event_type,
-                ip_address: ip_address || 'unknown', // Ideally get from request headers if possible (req.headers.get('x-forwarded-for'))
-                user_agent: user_agent || 'unknown'
+                user_ip: ip_address || req.headers.get('x-forwarded-for') || 'unknown',
+                user_agent: user_agent || req.headers.get('user-agent') || 'unknown',
+                user_country: country,
+                user_city: city,
+                metadata: metadata || {}
             })
 
         if (statError) throw statError
