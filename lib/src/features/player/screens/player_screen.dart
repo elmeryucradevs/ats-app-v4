@@ -198,6 +198,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 // Indicador de programa actual
                 _buildCurrentProgramBanner(context, ref, currentProgramAsync),
 
+                const SizedBox(height: 8),
+                const SmartBanner(position: AdPosition.center), // Banner móvil
                 const Divider(height: 1),
 
                 // Guía de programación

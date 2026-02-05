@@ -108,12 +108,21 @@ class _StartupInterstitialState extends ConsumerState<StartupInterstitial> {
                   ),
                 ),
                 Positioned(
-                  top: 40,
-                  right: 20,
-                  child: IconButton(
-                    icon:
-                        const Icon(Icons.close, color: Colors.white, size: 30),
-                    onPressed: _closeAd,
+                  top: 0,
+                  right: 0,
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: IconButton(
+                        icon: const Icon(Icons.close,
+                            color: Colors.white, size: 32),
+                        onPressed: _closeAd,
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.black54,
+                          padding: const EdgeInsets.all(8),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
