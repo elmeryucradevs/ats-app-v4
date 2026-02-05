@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../advertising/widgets/smart_banner.dart';
+import '../../advertising/models/ad_entities.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -165,16 +167,25 @@ class _MobileLayout extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       // El contenido de la ruta actual con Stack para mini player
-      body: Stack(
+      body: Column(
         children: [
-          child,
-          if (showMiniPlayer)
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: MiniVideoPlayer(onTap: () => context.go('/')),
+          const SmartBanner(position: AdPosition.top), // Banner Global Top
+          Expanded(
+            child: Stack(
+              children: [
+                child,
+                if (showMiniPlayer)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: MiniVideoPlayer(onTap: () => context.go('/')),
+                  ),
+              ],
             ),
+          ),
+          const SmartBanner(
+              position: AdPosition.bottom), // Banner Global Bottom
         ],
       ),
 
@@ -321,18 +332,39 @@ class _DesktopLayoutState extends ConsumerState<_DesktopLayout> {
 
           const VerticalDivider(thickness: 1, width: 1),
 
-          // Contenido principal - cada pantalla tiene sus propios TVFocusable
+          // Contenido principal con Publicidad Lateral y Top/Bottom
           Expanded(
-            child: Stack(
+            child: Column(
               children: [
-                widget.child,
-                if (widget.showMiniPlayer)
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: MiniVideoPlayer(onTap: () => context.go('/')),
+                const SmartBanner(
+                    position: AdPosition.top), // Banner GLOBAL Top
+                Expanded(
+                  child: Row(
+                    children: [
+                      const SmartBanner(
+                          position: AdPosition.left_sidebar), // Sidebar IZQ
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            widget.child,
+                            if (widget.showMiniPlayer)
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: MiniVideoPlayer(
+                                    onTap: () => context.go('/')),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SmartBanner(
+                          position: AdPosition.right_sidebar), // Sidebar DER
+                    ],
                   ),
+                ),
+                const SmartBanner(
+                    position: AdPosition.bottom), // Banner GLOBAL Bottom
               ],
             ),
           ),

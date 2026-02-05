@@ -82,18 +82,29 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                   return _buildLoadMoreButton(postIndex);
                 }
 
-                return NewsCard(
-                  post: newsResponse.posts[postIndex],
-                  tvId: 'news_card_$postIndex',
-                  tvUpId: postIndex == 0
-                      ? 'news_search'
-                      : 'news_card_${postIndex - 1}',
-                  tvDownId: postIndex < (totalItems - 1)
-                      ? 'news_card_${postIndex + 1}'
-                      : (newsResponse.hasMore
-                          ? 'news_loadmore'
-                          : 'mini_banner'),
-                  tvLeftId: 'nav_2',
+                return Column(
+                  children: [
+                    NewsCard(
+                      post: newsResponse.posts[postIndex],
+                      tvId: 'news_card_$postIndex',
+                      tvUpId: postIndex == 0
+                          ? 'news_search'
+                          : 'news_card_${postIndex - 1}',
+                      tvDownId: postIndex < (totalItems - 1)
+                          ? 'news_card_${postIndex + 1}'
+                          : (newsResponse.hasMore
+                              ? 'news_loadmore'
+                              : 'mini_banner'),
+                      tvLeftId: 'nav_2',
+                    ),
+                    // In-Feed Ads Injection
+                    if (postIndex == 2 || postIndex == 7)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: AppConstants.spacingMd),
+                        child: SmartBanner(position: AdPosition.in_feed),
+                      ),
+                  ],
                 );
               },
             ),
