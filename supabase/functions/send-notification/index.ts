@@ -159,7 +159,7 @@ serve(async (req) => {
         if (channel_id) {
             console.log(`Buscando configuración Firebase para canal: ${channel_id}`)
             const { data: configData, error: configError } = await supabase
-                .from('channel_firebase_configs')
+                .from('decrypted_channel_firebase_configs')
                 .select('project_id, client_email, private_key')
                 .eq('channel_id', channel_id)
                 .maybeSingle()
