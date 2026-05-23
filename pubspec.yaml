@@ -131,7 +131,7 @@ dependencies:
   js: ^0.7.2
   webview_flutter: ^4.13.0
   webview_flutter_web: ^0.2.3+4
-  font_awesome_flutter: ^10.12.0
+  font_awesome_flutter: ^11.0.0
   flutter_local_notifications: ^19.5.0
   timezone: ^0.10.1
   flutter_timezone: ^5.0.1

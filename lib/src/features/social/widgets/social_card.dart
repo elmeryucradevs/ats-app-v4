@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../models/social_link.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/tv_focusable_widgets.dart';
@@ -36,11 +37,17 @@ class SocialCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            link.icon,
-            size: AppConstants.iconSizeXl * 1.2,
-            color: link.color,
-          ),
+          link.icon is IconData
+              ? Icon(
+                  link.icon,
+                  size: AppConstants.iconSizeXl * 1.2,
+                  color: link.color,
+                )
+              : FaIcon(
+                  link.icon as FaIconData,
+                  size: AppConstants.iconSizeXl * 1.2,
+                  color: link.color,
+                ),
           const SizedBox(height: AppConstants.spacingMd),
           Text(
             link.name,

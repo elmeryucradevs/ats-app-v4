@@ -10,8 +10,8 @@ class SocialLink {
   /// URL del perfil
   final String url;
 
-  /// Icono de Material Icons
-  final IconData icon;
+  /// Icono de Material Icons o Font Awesome
+  final dynamic icon;
 
   /// Color representativo de la red social
   final Color color;
