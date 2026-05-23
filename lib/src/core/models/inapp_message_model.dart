@@ -1,6 +1,7 @@
 /// In-App Message model for mobile app
 class InAppMessage {
   final String id;
+  final String? channelId;
   final String title;
   final String body;
   final String? imageUrl;
@@ -13,6 +14,7 @@ class InAppMessage {
 
   InAppMessage({
     required this.id,
+    this.channelId,
     required this.title,
     required this.body,
     this.imageUrl,
@@ -27,6 +29,7 @@ class InAppMessage {
   factory InAppMessage.fromJson(Map<String, dynamic> json) {
     return InAppMessage(
       id: json['id'] as String,
+      channelId: json['channel_id'] as String?,
       title: json['title'] as String,
       body: json['body'] as String,
       imageUrl: json['image_url'] as String?,

@@ -42,6 +42,9 @@ class Program {
   /// Nombre del input de vMix asociado
   final String? vmixInputName;
 
+  /// Ruta local absoluta del archivo asociado
+  final String? localPath;
+
   /// Nombre del presentador/host
   final String? hostName;
 
@@ -61,6 +64,7 @@ class Program {
     this.contentRating,
     this.storedDayOfWeek,
     this.vmixInputName,
+    this.localPath,
     this.hostName,
     this.isActive = true,
   });
@@ -145,6 +149,7 @@ class Program {
       contentRating: json['content_rating'] as String?,
       storedDayOfWeek: json['day_of_week'] as int?,
       vmixInputName: json['vmix_input_name'] as String?,
+      localPath: json['local_path'] as String?,
       hostName: json['host_name'] as String?,
       isActive: json['is_active'] as bool? ?? true,
     );
@@ -165,6 +170,7 @@ class Program {
       'content_rating': contentRating,
       'day_of_week': storedDayOfWeek,
       'vmix_input_name': vmixInputName,
+      'local_path': localPath,
       'host_name': hostName,
       'is_active': isActive,
     };
@@ -184,6 +190,7 @@ class Program {
     String? contentRating,
     int? storedDayOfWeek,
     String? vmixInputName,
+    String? localPath,
     String? hostName,
     bool? isActive,
   }) {
@@ -200,6 +207,7 @@ class Program {
       contentRating: contentRating ?? this.contentRating,
       storedDayOfWeek: storedDayOfWeek ?? this.storedDayOfWeek,
       vmixInputName: vmixInputName ?? this.vmixInputName,
+      localPath: localPath ?? this.localPath,
       hostName: hostName ?? this.hostName,
       isActive: isActive ?? this.isActive,
     );

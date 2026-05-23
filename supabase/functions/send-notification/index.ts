@@ -17,6 +17,7 @@ interface NotificationPayload {
     data?: Record<string, any>
     tokens?: string[]
     platform?: 'web' | 'android' | 'ios' | 'windows' | 'macos'
+    channel_id?: string
 }
 
 // Generar JWT para OAuth 2.0
@@ -136,24 +137,14 @@ serve(async (req) => {
     }
 
     try {
-        // Obtener credenciales desde secrets
-        const FIREBASE_PROJECT_ID = Deno.env.get('FIREBASE_PROJECT_ID')
-        const FIREBASE_CLIENT_EMAIL = Deno.env.get('FIREBASE_CLIENT_EMAIL')
-        const FIREBASE_PRIVATE_KEY = Deno.env.get('FIREBASE_PRIVATE_KEY')
-
-        if (!FIREBASE_PROJECT_ID || !FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
-            throw new Error('Firebase credentials no configuradas en Supabase Secrets')
-        }
-
-        const serviceAccount = {
-            project_id: FIREBASE_PROJECT_ID,
-            client_email: FIREBASE_CLIENT_EMAIL,
-            private_key: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        }
+        // Inicializar Supabase primero
+        const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        const supabase = createClient(supabaseUrl, supabaseKey)
 
         // Parsear body
         const payload: NotificationPayload = await req.json()
-        const { title, body, type = 'general', data, tokens, platform } = payload
+        const { title, body, type = 'general', data, tokens, platform, channel_id } = payload
 
         if (!title || !body) {
             return new Response(
@@ -162,16 +153,63 @@ serve(async (req) => {
             )
         }
 
-        // Inicializar Supabase
-        const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-        const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-        const supabase = createClient(supabaseUrl, supabaseKey)
+        // 🔑 Resolver dinámicamente las credenciales Firebase por canal
+        let serviceAccount: any = null
 
-        // Obtener tokens
+        if (channel_id) {
+            console.log(`Buscando configuración Firebase para canal: ${channel_id}`)
+            const { data: configData, error: configError } = await supabase
+                .from('channel_firebase_configs')
+                .select('project_id, client_email, private_key')
+                .eq('channel_id', channel_id)
+                .maybeSingle()
+
+            if (configError) {
+                console.error(`Error buscando config de Firebase para canal ${channel_id}:`, configError)
+            }
+
+            if (configData) {
+                console.log(`Configuración personalizada de Firebase encontrada para canal: ${channel_id}`)
+                serviceAccount = {
+                    project_id: configData.project_id,
+                    client_email: configData.client_email,
+                    private_key: configData.private_key.replace(/\\n/g, '\n'),
+                }
+            }
+        }
+
+        // Fallback a Secrets si no se encontró config personalizada
+        if (!serviceAccount) {
+            console.log("Usando configuración de Firebase por defecto (Secrets globales)...")
+            const FIREBASE_PROJECT_ID = Deno.env.get('FIREBASE_PROJECT_ID')
+            const FIREBASE_CLIENT_EMAIL = Deno.env.get('FIREBASE_CLIENT_EMAIL')
+            const FIREBASE_PRIVATE_KEY = Deno.env.get('FIREBASE_PRIVATE_KEY')
+
+            if (!FIREBASE_PROJECT_ID || !FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
+                throw new Error('Firebase credentials no configuradas en Supabase Secrets')
+            }
+
+            serviceAccount = {
+                project_id: FIREBASE_PROJECT_ID,
+                client_email: FIREBASE_CLIENT_EMAIL,
+                private_key: FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+            }
+        }
+
+        // Obtener tokens filtrados por canal
         let targetTokens: string[] = tokens || []
 
         if (targetTokens.length === 0) {
             let query = supabase.from('fcm_tokens').select('token')
+            
+            // Aislamiento: solo enviar a tokens del canal emisor
+            if (channel_id) {
+                query = query.eq('channel_id', channel_id)
+            } else {
+                // Fallback: si no hay channel_id, enviar solo al canal principal por defecto
+                query = query.eq('channel_id', 'd0000000-0000-0000-0000-000000000000')
+            }
+            
             if (platform) query = query.eq('platform', platform)
 
             const { data: tokenData, error } = await query
@@ -187,7 +225,7 @@ serve(async (req) => {
             )
         }
 
-        console.log(`Enviando a ${targetTokens.length} dispositivos`)
+        console.log(`Enviando a ${targetTokens.length} dispositivos para canal: ${channel_id || 'global'}`)
 
         // Obtener access token
         const accessToken = await getAccessToken(serviceAccount)
@@ -223,6 +261,7 @@ serve(async (req) => {
             body,
             type,
             data: data || {},
+            channel_id: channel_id || 'd0000000-0000-0000-0000-000000000000',
         })
 
         return new Response(

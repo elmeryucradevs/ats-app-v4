@@ -78,11 +78,13 @@ class _VideoScrollAdState extends ConsumerState<VideoScrollAd> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading)
+    if (_isLoading) {
       return const SizedBox(
           height: 100, child: Center(child: CircularProgressIndicator()));
-    if (_ad == null || _controller == null || !_controller!.value.isInitialized)
+    }
+    if (_ad == null || _controller == null || !_controller!.value.isInitialized) {
       return const SizedBox.shrink();
+    }
 
     return VisibilityDetector(
       key: Key('video-ad-${_ad!.id}'),

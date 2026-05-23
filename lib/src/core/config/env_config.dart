@@ -47,7 +47,7 @@ class EnvConfig {
   /// URL del stream de video HLS (.m3u8)
   static String get streamUrl => _getPlatformValue(
     'STREAM_URL',
-    fallback: 'https://video2.getstreamhosting.com:19360/8016/8016.m3u8',
+    fallback: 'https://res.cloudinary.com/dzddovfkf/video/upload/v1770120855/logo_edeamv.mp4',
   );
 
   // ===================================

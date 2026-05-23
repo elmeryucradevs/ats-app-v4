@@ -1,4 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:package_info_plus/package_info_plus.dart';
 import '../config/env_config.dart';
 import '../utils/app_logger.dart';
 
@@ -18,6 +20,55 @@ class SupabaseService {
 
   /// Cliente de Supabase (acceso directo)
   static SupabaseClient get client => Supabase.instance.client;
+
+  /// Canal activo resuelto para multi-tenancy dinámico
+  static String channelId = 'd0000000-0000-0000-0000-000000000000';
+
+  /// Resuelve dinámicamente el ID del canal en base al package name o URL web
+  static Future<void> resolveChannelId() async {
+    try {
+      String? packageId;
+      if (!kIsWeb) {
+        final packageInfo = await PackageInfo.fromPlatform();
+        packageId = packageInfo.packageName;
+        AppLogger.info('[SupabaseService] Package Name en móvil: $packageId');
+      }
+
+      String? webUrl;
+      if (kIsWeb) {
+        webUrl = Uri.base.origin;
+        AppLogger.info('[SupabaseService] Web URL origin: $webUrl');
+      }
+
+      // Buscar coincidencia en la base de datos
+      var query = client.from('channels').select('id');
+
+      if (packageId != null && webUrl != null) {
+        query = query.or('android_package_name.eq.$packageId,web_app_url.eq.$webUrl');
+      } else if (packageId != null) {
+        query = query.eq('android_package_name', packageId);
+      } else if (webUrl != null) {
+        query = query.eq('web_app_url', webUrl);
+      } else {
+        AppLogger.info('[SupabaseService] Entorno local sin package ni URL web. Usando canal por defecto.');
+        return;
+      }
+
+      final response = await query.maybeSingle();
+
+      if (response != null && response['id'] != null) {
+        channelId = response['id'] as String;
+        AppLogger.info('[SupabaseService] ✅ Canal dinámico resuelto con éxito: $channelId');
+      } else {
+        AppLogger.warning(
+          '[SupabaseService] ⚠️ No se encontró ningún canal vinculado a este entorno en DB. '
+          'Usando canal por defecto (fallback): $channelId',
+        );
+      }
+    } catch (e) {
+      AppLogger.error('[SupabaseService] ❌ Error resolviendo canal dinámico, usando fallback: $e');
+    }
+  }
 
   // ===================================
   // INICIALIZACIÓN
@@ -68,6 +119,7 @@ class SupabaseService {
 
       _initialized = true;
       AppLogger.info('[Supabase] ✅ Inicializado correctamente');
+      await resolveChannelId();
       return true;
     } catch (e, stackTrace) {
       AppLogger.error('[Supabase] Error en inicialización', e, stackTrace);
@@ -97,11 +149,12 @@ class SupabaseService {
   /// Retorna una lista de todos los programas ordenados por día y hora.
   Future<List<Map<String, dynamic>>> getAllPrograms() async {
     try {
-      AppLogger.debug('[Supabase] Obteniendo programación completa...');
+      AppLogger.debug('[Supabase] Obteniendo programación completa para canal: $channelId...');
 
       final response = await client
           .from(programsTable)
           .select()
+          .eq('channel_id', channelId)
           .order('day_of_week')
           .order('start_time');
 
@@ -118,11 +171,12 @@ class SupabaseService {
   /// [dayOfWeek]: 1 = Lunes, 2 = Martes, ..., 7 = Domingo
   Future<List<Map<String, dynamic>>> getProgramsByDay(int dayOfWeek) async {
     try {
-      AppLogger.debug('[Supabase] Obteniendo programas del día $dayOfWeek...');
+      AppLogger.debug('[Supabase] Obteniendo programas del día $dayOfWeek para canal: $channelId...');
 
       final response = await client
           .from(programsTable)
           .select()
+          .eq('channel_id', channelId)
           .eq('day_of_week', dayOfWeek)
           .order('start_time');
 
@@ -140,7 +194,7 @@ class SupabaseService {
   RealtimeChannel subscribeToPrograms(
     void Function(PostgresChangePayload) callback,
   ) {
-    AppLogger.debug('[Supabase] Suscribiéndose a cambios en programación...');
+    AppLogger.debug('[Supabase] Suscribiéndose a cambios en programación para canal: $channelId...');
 
     return client
         .channel('programs-channel')
@@ -148,6 +202,11 @@ class SupabaseService {
           event: PostgresChangeEvent.all,
           schema: 'public',
           table: programsTable,
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'channel_id',
+            value: channelId,
+          ),
           callback: callback,
         )
         .subscribe();
@@ -210,6 +269,7 @@ class SupabaseService {
             .update({
               'platform': platform,
               'user_id': userId,
+              'channel_id': channelId,
               'updated_at': DateTime.now().toIso8601String(),
             })
             .eq('token', token);
@@ -219,6 +279,7 @@ class SupabaseService {
           'token': token,
           'platform': platform,
           'user_id': userId,
+          'channel_id': channelId,
           'created_at': DateTime.now().toIso8601String(),
         });
       }

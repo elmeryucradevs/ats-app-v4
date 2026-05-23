@@ -60,3 +60,38 @@ CHECK (category IN (
 ));
 
 -- ==============================================================================
+-- FIX RLS POLICIES FOR MOVIES DATABASE (NEW)
+-- ==============================================================================
+-- El editor de escritorio necesita guardar y listar películas registradas localmente en 'movies_database'.
+-- Permitimos todas las operaciones (CRUD) desde la clave 'anon'.
+
+-- 1. Permitir SELECT desde anon
+DROP POLICY IF EXISTS "Allow anon read on movies_database" ON movies_database;
+DROP POLICY IF EXISTS "Admins can manage movies database" ON movies_database; -- Eliminar la anterior política restrictiva si es necesario
+CREATE POLICY "Allow anon read on movies_database" 
+ON movies_database FOR SELECT 
+TO anon, authenticated
+USING (true);
+
+-- 2. Permitir INSERT desde anon
+DROP POLICY IF EXISTS "Allow anon insert on movies_database" ON movies_database;
+CREATE POLICY "Allow anon insert on movies_database" 
+ON movies_database FOR INSERT 
+TO anon 
+WITH CHECK (true);
+
+-- 3. Permitir UPDATE desde anon
+DROP POLICY IF EXISTS "Allow anon update on movies_database" ON movies_database;
+CREATE POLICY "Allow anon update on movies_database" 
+ON movies_database FOR UPDATE 
+TO anon 
+USING (true);
+
+-- 4. Permitir DELETE desde anon
+DROP POLICY IF EXISTS "Allow anon delete on movies_database" ON movies_database;
+CREATE POLICY "Allow anon delete on movies_database" 
+ON movies_database FOR DELETE 
+TO anon 
+USING (true);
+
+-- ==============================================================================

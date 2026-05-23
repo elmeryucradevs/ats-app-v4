@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/inapp_message_model.dart';
+import 'supabase_service.dart';
 
 class InAppMessageService {
   static final InAppMessageService _instance = InAppMessageService._internal();
@@ -32,7 +33,9 @@ class InAppMessageService {
     // Subscribe to realtime changes
     _subscription = _supabase
         .from('inapp_messages')
-        .stream(primaryKey: ['id']).listen((data) {
+        .stream(primaryKey: ['id'])
+        .eq('channel_id', SupabaseService.channelId)
+        .listen((data) {
       _handleRealtimeUpdate(data);
     });
 
@@ -46,6 +49,7 @@ class InAppMessageService {
       final response = await _supabase
           .from('inapp_messages')
           .select()
+          .eq('channel_id', SupabaseService.channelId)
           .eq('is_active', true)
           .lte('start_date', now)
           .order('created_at', ascending: false)
