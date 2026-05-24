@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../core/services/supabase_service.dart';
 import '../models/ad_entities.dart';
 import '../services/ad_service.dart';
 
@@ -36,6 +37,7 @@ class _SmartBannerState extends ConsumerState<SmartBanner> {
           position: widget.position,
           type: AdType.banner,
           city: widget.city,
+          channelId: SupabaseService.channelId,
         );
 
     if (mounted) {

@@ -108,6 +108,10 @@ class EnvConfig {
   static String get channelName =>
       _getPlatformValue('CHANNEL_NAME', fallback: 'ATESUR');
 
+  /// ID del canal de TV (opcional, fuerza un canal en el .env)
+  static String get channelId =>
+      _getPlatformValue('CHANNEL_ID', fallback: '');
+
   /// URL del logo del canal
   static String get channelLogoUrl =>
       _getPlatformValue('CHANNEL_LOGO_URL', fallback: '');

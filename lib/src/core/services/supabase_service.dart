@@ -27,6 +27,12 @@ class SupabaseService {
   /// Resuelve dinámicamente el ID del canal en base al package name o URL web
   static Future<void> resolveChannelId() async {
     try {
+      if (EnvConfig.channelId.isNotEmpty) {
+        channelId = EnvConfig.channelId;
+        AppLogger.info('[SupabaseService] ✅ Usando channel_id forzado de .env: $channelId');
+        return;
+      }
+
       String? packageId;
       if (!kIsWeb) {
         final packageInfo = await PackageInfo.fromPlatform();

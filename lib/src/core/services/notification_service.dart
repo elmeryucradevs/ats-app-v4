@@ -189,6 +189,7 @@ class NotificationService {
         {
           'token': token,
           'platform': platform,
+          'channel_id': SupabaseService.channelId,
           'last_used_at': DateTime.now().toIso8601String(),
         },
         onConflict:

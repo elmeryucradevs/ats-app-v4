@@ -19,16 +19,25 @@ serve(async (req) => {
             { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
         )
 
-        const { position, type, city, country } = await req.json()
+        const { position, type, city, country, channel_id } = await req.json()
 
         // 1. Get active campaigns
         const now = new Date().toISOString()
-        const { data: campaigns, error: campError } = await supabaseClient
+        let queryCamp = supabaseClient
             .from('advertising_campaigns')
             .select('id, target_countries, target_cities, max_impressions, current_impressions')
             .eq('status', 'active')
             .lte('start_date', now)
             .gte('end_date', now)
+
+        if (channel_id) {
+            queryCamp = queryCamp.eq('channel_id', channel_id)
+        } else {
+            // Fallback to default channel
+            queryCamp = queryCamp.eq('channel_id', 'd0000000-0000-0000-0000-000000000000')
+        }
+
+        const { data: campaigns, error: campError } = await queryCamp
 
         if (campError) throw campError
 

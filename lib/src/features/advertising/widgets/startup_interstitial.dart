@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_player/video_player.dart';
+import '../../../core/services/supabase_service.dart';
 import '../models/ad_entities.dart';
 import '../services/ad_service.dart';
 
@@ -33,13 +34,11 @@ class _StartupInterstitialState extends ConsumerState<StartupInterstitial> {
   }
 
   Future<void> _checkAndShowAd() async {
-    // Basic frequency check (e.g. Session based via SharedPreferences)
-    final prefs = await SharedPreferences.getInstance();
-
     // Fetch ad
     final ad = await ref.read(adServiceProvider).getAd(
           position: AdPosition.fullscreen,
           type: AdType.fullscreen_startup,
+          channelId: SupabaseService.channelId,
         );
 
     if (ad != null) {

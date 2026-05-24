@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+import '../../../core/services/supabase_service.dart';
 import '../models/ad_entities.dart';
 import '../services/ad_service.dart';
 
@@ -31,6 +32,7 @@ class _VideoScrollAdState extends ConsumerState<VideoScrollAd> {
           position: AdPosition.in_feed, // or blog_post
           type: AdType.blog_scroll_video,
           city: widget.city,
+          channelId: SupabaseService.channelId,
         );
 
     if (mounted) {

@@ -17,6 +17,7 @@ class AdService {
     AdType? type,
     String? city,
     String? country,
+    required String channelId,
   }) async {
     try {
       final response =
@@ -25,6 +26,7 @@ class AdService {
         'type': type?.name,
         'city': city,
         'country': country,
+        'channel_id': channelId,
       });
 
       if (response.status == 200 && response.data != null) {
