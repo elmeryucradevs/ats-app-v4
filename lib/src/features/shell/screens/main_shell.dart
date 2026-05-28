@@ -265,7 +265,7 @@ class _DesktopLayoutState extends ConsumerState<_DesktopLayout> {
               color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.95),
               border: Border(
                 right: BorderSide(
-                  color: Theme.of(context).colorScheme.divider.withValues(alpha: 0.15),
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
                   width: 1,
                 ),
               ),
