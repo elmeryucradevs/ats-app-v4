@@ -165,11 +165,16 @@ class _MobileLayout extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobileLandscape = screenHeight < 500 && screenWidth < 900;
+
     return Scaffold(
       // El contenido de la ruta actual con Stack para mini player
       body: Column(
         children: [
-          const SmartBanner(position: AdPosition.top), // Banner Global Top
+          if (!isMobileLandscape)
+            const SmartBanner(position: AdPosition.top), // Banner Global Top
           Expanded(
             child: Stack(
               children: [
@@ -184,8 +189,9 @@ class _MobileLayout extends ConsumerWidget {
               ],
             ),
           ),
-          const SmartBanner(
-              position: AdPosition.bottom), // Banner Global Bottom
+          if (!isMobileLandscape)
+            const SmartBanner(
+                position: AdPosition.bottom), // Banner Global Bottom
         ],
       ),
 

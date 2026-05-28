@@ -67,8 +67,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         }
       },
       child: Scaffold(
-        appBar: (isPipMode || isTvFullscreen)
-            ? null // Hide AppBar in PiP mode or TV Fullscreen
+        appBar: (isPipMode || isTvFullscreen || (MediaQuery.of(context).size.height < 500 && MediaQuery.of(context).size.width < 900))
+            ? null // Hide AppBar in PiP mode, TV Fullscreen or Mobile Landscape
             : AppBar(
                 title: AppBarLogoWidget(
                   height: 32,
@@ -125,10 +125,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               );
             }
 
+            final double screenHeight = MediaQuery.of(context).size.height;
+            final double screenWidth = MediaQuery.of(context).size.width;
+            final bool isMobileLandscape = screenHeight < 500 && screenWidth < 900;
+
             // Desktop/TV usually reports landscape, treat as such
             // but we want side-by-side only if enough width
             final isWide =
-                MediaQuery.of(context).size.width >= 600 || isLandscape;
+                screenWidth >= 600 || isLandscape;
 
             if (isWide) {
               return Row(
@@ -150,10 +154,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                           // Current Program Banner below video (fixed height)
                           _buildCurrentProgramBanner(
                               context, ref, currentProgramAsync),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: SmartBanner(position: AdPosition.center),
-                          ),
+                          if (!isMobileLandscape)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: SmartBanner(position: AdPosition.center),
+                            ),
                         ],
                       ),
                     ),
@@ -197,6 +202,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     WidgetRef ref,
     AsyncValue<Program?> currentProgramAsync,
   ) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobileLandscape = screenHeight < 500 && screenWidth < 900;
+    final double verticalPadding = isMobileLandscape ? 6.0 : AppConstants.spacingMd;
+
     return currentProgramAsync.when(
       data: (program) {
         if (program == null) {
@@ -205,7 +215,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(AppConstants.spacingMd),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppConstants.spacingMd,
+            vertical: verticalPadding,
+          ),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             border: Border(
@@ -250,7 +263,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         );
       },
       loading: () => Container(
-        padding: const EdgeInsets.all(AppConstants.spacingMd),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppConstants.spacingMd,
+          vertical: verticalPadding,
+        ),
         child: const Row(
           children: [
             SizedBox(
@@ -268,9 +284,17 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   }
 
   Widget _buildNoProgramBanner(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobileLandscape = screenHeight < 500 && screenWidth < 900;
+    final double verticalPadding = isMobileLandscape ? 6.0 : AppConstants.spacingMd;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppConstants.spacingMd),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppConstants.spacingMd,
+        vertical: verticalPadding,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
       ),
