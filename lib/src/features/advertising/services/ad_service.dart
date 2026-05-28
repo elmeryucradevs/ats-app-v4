@@ -42,6 +42,40 @@ class AdService {
     }
   }
 
+  // Fetch all ads for a specific position and type context
+  Future<List<AdvertisingAd>> getAds({
+    required AdPosition position,
+    AdType? type,
+    String? city,
+    String? country,
+    required String channelId,
+  }) async {
+    try {
+      final response =
+          await _supabase.functions.invoke('get-advertisement', body: {
+        'position': position.name,
+        'type': type?.name,
+        'city': city,
+        'country': country,
+        'channel_id': channelId,
+      });
+
+      if (response.status == 200 && response.data != null) {
+        final data = response.data;
+        if (data['ads'] != null) {
+          final List<dynamic> list = data['ads'];
+          return list.map((item) => AdvertisingAd.fromMap(item)).toList();
+        } else if (data['ad'] != null) {
+          return [AdvertisingAd.fromMap(data['ad'])];
+        }
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching ads: $e');
+      return [];
+    }
+  }
+
   Future<void> trackEvent({
     required String adId,
     required String campaignId,

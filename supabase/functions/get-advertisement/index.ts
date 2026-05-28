@@ -102,7 +102,10 @@ serve(async (req) => {
         }
 
         return new Response(
-            JSON.stringify({ ad: selectedAd }),
+            JSON.stringify({ 
+                ad: selectedAd,
+                ads: ads
+            }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
         )
 
