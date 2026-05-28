@@ -185,24 +185,30 @@ class _SmartBannerState extends ConsumerState<SmartBanner> {
 
     // Determine dimensions based on position or ad specifications
     double bannerHeight;
+    double? bannerWidth;
+
     switch (widget.position) {
       case AdPosition.left_sidebar:
       case AdPosition.right_sidebar:
         bannerHeight = 600.0;
+        bannerWidth = 160.0; // Standard skyscraper width
         break;
       case AdPosition.in_feed:
         bannerHeight = 250.0;
+        bannerWidth = 300.0; // Standard in-feed rectangle width
         break;
       case AdPosition.top:
       case AdPosition.bottom:
       case AdPosition.center:
       default:
         bannerHeight = 90.0;
+        bannerWidth = null; // Leaderboards take full screen horizontal width
         break;
     }
 
     final double screenWidth = MediaQuery.of(context).size.width;
     double resolvedHeight = bannerHeight;
+    double? resolvedWidth = bannerWidth;
 
     // Responsive scaling for horizontal and skyscraper banners on mobile devices
     if (widget.position == AdPosition.top ||
@@ -215,6 +221,7 @@ class _SmartBannerState extends ConsumerState<SmartBanner> {
         widget.position == AdPosition.right_sidebar) {
       if (screenWidth < 768) {
         resolvedHeight = 250.0; // Shrink skyscraper sidebar ads if screen is tight
+        resolvedWidth = screenWidth; // Allow full width when stacked vertically on mobile
       }
     }
 
@@ -224,6 +231,7 @@ class _SmartBannerState extends ConsumerState<SmartBanner> {
         onTap: () => _onTap(ad),
         child: Container(
           height: resolvedHeight,
+          width: resolvedWidth,
           alignment: Alignment.center,
           margin: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
@@ -260,6 +268,7 @@ class _SmartBannerState extends ConsumerState<SmartBanner> {
       onExit: (_) => setState(() => _isHovered = false),
       child: Container(
         height: resolvedHeight,
+        width: resolvedWidth,
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
