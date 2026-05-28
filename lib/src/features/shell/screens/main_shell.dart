@@ -258,13 +258,28 @@ class _DesktopLayoutState extends ConsumerState<_DesktopLayout> {
     return Scaffold(
       body: Row(
         children: [
-          // Sidebar con TVFocusable para navegación TV
+          // Sidebar con TVFocusable para navegación TV (Estilo Premium Glassmorphic)
           Container(
             width: 80,
-            color: Theme.of(context).colorScheme.surface,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.95),
+              border: Border(
+                right: BorderSide(
+                  color: Theme.of(context).colorScheme.divider.withValues(alpha: 0.15),
+                  width: 1,
+                ),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 16,
+                  offset: const Offset(4, 0),
+                ),
+              ],
+            ),
             child: Column(
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 _buildNavItem(
                   context: context,
                   id: 'nav_0',
@@ -278,6 +293,7 @@ class _DesktopLayoutState extends ConsumerState<_DesktopLayout> {
                   rightId:
                       'player_fullscreen', // Al presionar derecha, ir al contenido
                 ),
+                const SizedBox(height: 8),
                 _buildNavItem(
                   context: context,
                   id: 'nav_1',
@@ -290,6 +306,7 @@ class _DesktopLayoutState extends ConsumerState<_DesktopLayout> {
                   downId: 'nav_2',
                   rightId: 'schedule_date_0', // Primer chip de fecha
                 ),
+                const SizedBox(height: 8),
                 _buildNavItem(
                   context: context,
                   id: 'nav_2',
@@ -302,6 +319,7 @@ class _DesktopLayoutState extends ConsumerState<_DesktopLayout> {
                   downId: 'nav_3',
                   rightId: 'news_search', // Botón de búsqueda
                 ),
+                const SizedBox(height: 8),
                 _buildNavItem(
                   context: context,
                   id: 'nav_3',
@@ -314,6 +332,7 @@ class _DesktopLayoutState extends ConsumerState<_DesktopLayout> {
                   downId: 'nav_4',
                   rightId: 'social_card_0', // Primera card social
                 ),
+                const SizedBox(height: 8),
                 _buildNavItem(
                   context: context,
                   id: 'nav_4',
@@ -329,8 +348,6 @@ class _DesktopLayoutState extends ConsumerState<_DesktopLayout> {
               ],
             ),
           ),
-
-          const VerticalDivider(thickness: 1, width: 1),
 
           // Contenido principal con Publicidad Lateral y Top/Bottom
           Expanded(
@@ -392,49 +409,85 @@ class _DesktopLayoutState extends ConsumerState<_DesktopLayout> {
       downId: downId,
       rightId: rightId,
       leftId: null, // No hay nada a la izquierda del sidebar
-      showDefaultFocusDecoration: true, // Mostrar decoración de foco visual
+      showDefaultFocusDecoration: false, // Usar nuestra propia decoración de foco de alta gama
       onSelect: () => _onItemTapped(context, index),
       builder: (context, isFocused, child) {
         // Wrap with GestureDetector for web/mouse click support
         return GestureDetector(
           onTap: () => _onItemTapped(context, index),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
+          child: Container(
             width: 80,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(
-              color: isFocused
-                  ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
-                  : (isSelected
-                      ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-                      : Colors.transparent),
-              border: isFocused
-                  ? Border.all(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 3,
-                    )
-                  : null,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            height: 72,
+            alignment: Alignment.center,
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                Icon(
-                  isSelected ? selectedIcon : icon,
-                  size: isFocused ? 28 : 24,
-                  color: isSelected || isFocused
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface,
+                // Contenedor del Botón (Glassmorphic)
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 68,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: isFocused
+                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
+                        : (isSelected
+                            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.08)
+                            : Colors.transparent),
+                    borderRadius: BorderRadius.circular(16),
+                    border: isFocused
+                        ? Border.all(
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+                            width: 1.5,
+                          )
+                        : Border.all(color: Colors.transparent, width: 1.5),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        isSelected ? selectedIcon : icon,
+                        size: isFocused ? 26 : 24,
+                        color: isSelected || isFocused
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: isSelected || isFocused ? FontWeight.bold : FontWeight.w500,
+                          color: isSelected || isFocused
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: isFocused ? 11 : 10,
-                    fontWeight: isFocused ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected || isFocused
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurface,
+                // Glowing Left Indicator pill (Estilo premium para TV/Web)
+                Positioned(
+                  left: 2,
+                  top: 18,
+                  bottom: 18,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: 3.5,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(2),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                                blurRadius: 6,
+                                spreadRadius: 1.5,
+                              )
+                            ]
+                          : [],
+                    ),
                   ),
                 ),
               ],

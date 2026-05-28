@@ -130,31 +130,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
             final isWide =
                 MediaQuery.of(context).size.width >= 600 || isLandscape;
 
-            // WEB: Layout vertical (video arriba, guía abajo)
-            if (kIsWeb) {
-              return Column(
-                children: [
-                  // Reproductor más grande (60% del alto)
-                  Expanded(
-                    flex: 3,
-                    child: FullVideoPlayer(isPipMode: isPipMode),
-                  ),
-                  // Banner de programa actual
-                  _buildCurrentProgramBanner(context, ref, currentProgramAsync),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child: SmartBanner(position: AdPosition.center),
-                  ),
-                  const Divider(height: 1),
-                  // Guía de programación más pequeña (40% del alto)
-                  const Expanded(
-                    flex: 2,
-                    child: ProgramGuideWidget(),
-                  ),
-                ],
-              );
-            }
-
             if (isWide) {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -175,6 +150,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                           // Current Program Banner below video (fixed height)
                           _buildCurrentProgramBanner(
                               context, ref, currentProgramAsync),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: SmartBanner(position: AdPosition.center),
+                          ),
                         ],
                       ),
                     ),

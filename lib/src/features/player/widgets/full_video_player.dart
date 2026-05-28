@@ -240,8 +240,9 @@ class _FullVideoPlayerState extends ConsumerState<FullVideoPlayer> {
     // WEB: Usar Custom Player directamente
     if (kIsWeb) {
       final streamUrl = ref.watch(configServiceProvider).streamUrl;
+      final isWide = MediaQuery.of(context).size.width >= AppConstants.desktopBreakpoint;
       return ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: 250),
+        constraints: BoxConstraints(maxHeight: isWide ? 600 : 250),
         child: AspectRatio(
           aspectRatio: 16 / 9,
           // Usar widget de platform view con URL de ConfigService
